@@ -1,0 +1,30 @@
+[project]
+name = "streamsight-backend"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]",
+    "yfinance",
+    "sqlalchemy",
+    "aiosqlite",
+    "uvicorn[standard]>=0.35.0",
+    "pyarrow>=20.0.0",
+    "alembic>=1.17.1",
+    "PyJWT>=2.8.0",
+    "passlib[bcrypt]>=1.7.0",
+    "psycopg[binary]>=3.2.12",
+    "bcrypt==4.3.0",
+    "streamsight>=2.0.1",
+    "authlib>=1.6.5",
+    "starlette>=0.46.2",
+    "itsdangerous>=2.2.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.9,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "streamsight_backend"

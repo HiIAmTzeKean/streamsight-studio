@@ -1,0 +1,88 @@
+services:
+  # Using PostgreSQL for the database
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: streamsight_db
+    networks:
+      - streamsight-network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Using FastAPI for the backend
+  backend:
+    build:
+      context: ./streamsight-backend
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./streamsight-backend:/src
+    environment:
+      PYTHONUNBUFFERED: 1
+      DATABASE_URL: postgresql+psycopg://postgres:password@postgres:5432/streamsight_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - streamsight-network
+    develop:
+      watch:
+        # Sync source code changes and restart the service
+        - action: sync+restart
+          path: ./streamsight-backend
+          target: /src
+          ignore:
+            - __pycache__
+            - .pytest_cache
+            - .venv
+            - .egg-info
+            - dist
+            - uv.lock
+
+  # Using React for the frontend
+  frontend:
+    build:
+      context: ./streamsight-studio
+      args:
+        # Leave VITE_BACKEND_BASE_URL empty so the frontend uses relative
+        # paths (e.g. `/api/...`) and nginx can proxy them to the `backend`
+        # service inside the Docker network. This avoids exposing a hostname
+        # that the browser cannot resolve.
+        VITE_BACKEND_BASE_URL: ""
+    ports:
+      - "8000:80"
+    depends_on:
+      - backend
+    environment:
+      # Runtime env for non-built dev (e.g., when running the dev server locally)
+      VITE_BACKEND_BASE_URL: ""
+    restart: unless-stopped
+    networks:
+      - streamsight-network
+    develop:
+      watch:
+        # Sync source code changes with restart for development
+        - action: sync+restart
+          path: ./streamsight-studio
+          target: /app
+          ignore:
+            - node_modules
+            - dist
+            - .git
+
+volumes:
+  pgdata:
+
+networks:
+  streamsight-network:
+    driver: bridge
