@@ -6,8 +6,8 @@ export default function Home() {
       {/* Hero Section */}
       <section className="space-y-6">
         <div className="space-y-3">
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">
-            Streamsight
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent leading-tight pb-1">
+            streamsight
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
             An open-source Python toolkit that models temporal context to more accurately represent real-world offline evaluation scenarios for recommender systems.
