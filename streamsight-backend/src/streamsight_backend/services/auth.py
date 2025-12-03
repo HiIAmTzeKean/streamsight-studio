@@ -12,12 +12,12 @@ from streamsight_backend.config.setting import get_settings
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 
 
-def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
+def get_current_username(token: str = Depends(oauth2_scheme)) -> str:
     try:
         payload = decode_token(token)
-        username = payload.get("user_id")
+        username = payload.get("username")
         if not username:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token: missing user_id")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token: missing username")
         return username
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")

@@ -7,11 +7,11 @@ from sqlalchemy.orm import Session
 
 from streamsight_backend.config.setting import get_settings
 from streamsight_backend.db.connection import get_db
-from streamsight_backend.db.schema import User
+from streamsight_backend.db.schema import StreamUser
 from streamsight_backend.services.auth import (
     create_access_token,
     decode_token,
-    get_current_user,
+    get_current_username,
     verify_password,
 )
 
@@ -25,7 +25,7 @@ def create_auth_router() -> APIRouter:
 
     @router.post("/token")
     async def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
-        user = db.query(User).filter(User.username == form_data.username).first()
+        user = db.query(StreamUser).filter(StreamUser.username == form_data.username).first()
         if not user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
         if not verify_password(plain_password=form_data.password, hashed_password=user.password):
@@ -44,9 +44,9 @@ def create_auth_router() -> APIRouter:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
     @router.get("/users")
-    def list_users(db: Session = Depends(get_db), current_username: str = Depends(get_current_user)) -> list[dict]:
+    def list_users(db: Session = Depends(get_db), current_username: str = Depends(get_current_username)) -> list[dict]:
         """Return all users (id and username). Protected endpoint."""
-        users = db.query(User).all()
+        users = db.query(StreamUser).all()
         return [{"id": u.id, "username": u.username} for u in users]
 
     return router

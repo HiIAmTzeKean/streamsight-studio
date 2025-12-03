@@ -12,8 +12,12 @@ from streamsight_backend.config.setting import Settings, get_settings
 from streamsight_backend.db.connection import create_tables
 from streamsight_backend.db.seed import seed_initial_users
 from streamsight_backend.router import (
+    create_algorithm_router,
     create_auth_google_router,
     create_auth_router,
+    create_dataset_router,
+    create_stream_router,
+    create_metric_router,
 )
 
 
@@ -92,3 +96,7 @@ def _add_routes(app: FastAPI, settings: Settings) -> None:
 
     app.include_router(create_auth_router(), prefix=API_PREFIX)
     app.include_router(create_auth_google_router(), prefix=API_PREFIX)
+    app.include_router(create_dataset_router(), prefix=API_PREFIX)
+    app.include_router(create_algorithm_router(), prefix=API_PREFIX)
+    app.include_router(create_stream_router(), prefix=API_PREFIX)
+    app.include_router(create_metric_router(), prefix=API_PREFIX)
