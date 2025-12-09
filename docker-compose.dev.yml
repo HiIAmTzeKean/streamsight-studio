@@ -1,4 +1,53 @@
 services:
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: streamsight_db
+    networks:
+      - streamsight-network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./streamsight-backend
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./streamsight-backend/src:/src/src
+    env_file: .env
+    environment:
+      PYTHONUNBUFFERED: 1
+      DATABASE_URL: postgresql+psycopg://postgres:password@postgres:5432/streamsight_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - streamsight-network
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./streamsight-backend/src
+          target: /src/src
+          ignore:
+            - __pycache__
+            - .pytest_cache
+            - .venv
+            - .egg-info
+            - dist
+
   frontend:
     build:
       context: ./streamsight-studio
@@ -24,55 +73,6 @@ services:
           target: /app/src
           ignore:
             - .git
-
-  backend:
-    build:
-      context: ./streamsight-backend
-    ports:
-      - "9000:9000"
-    volumes:
-      - ./streamsight-backend:/src
-    env_file: .env
-    environment:
-      PYTHONUNBUFFERED: 1
-      DATABASE_URL: postgresql+psycopg://postgres:password@postgres:5432/streamsight_db
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - streamsight-network
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./streamsight-backend
-          target: /src
-          ignore:
-            - __pycache__
-            - .pytest_cache
-            - .venv
-            - .egg-info
-            - dist
-
-  postgres:
-    image: postgres:17-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: streamsight_db
-    networks:
-      - streamsight-network
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
 volumes:
   pgdata:
