@@ -27,7 +27,7 @@ function NavGreeting({ collapsed = false }: { collapsed?: boolean }) {
       <NavLink
         to="/login"
         className={({ isActive }) =>
-          `flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
+          `flex items-center ${collapsed ? 'justify-center' : ''} px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
             ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50'
             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900'
           }`
@@ -45,7 +45,7 @@ function NavGreeting({ collapsed = false }: { collapsed?: boolean }) {
     <div className="relative">
       <button
         onClick={() => setOpen((s) => !s)}
-        className="flex items-center w-full px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50"
+        className={`flex items-center w-full ${collapsed ? 'justify-center' : ''} px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50`}
       >
         <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -90,12 +90,10 @@ function AppContent() {
 
             {/* Logo */}
             <div className="px-4 py-2">
-              {sidebarOpen ? (
+              {sidebarOpen && (
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">
                   streamsight
                 </h1>
-              ) : (
-                <div className="text-2xl font-bold text-blue-600">S</div>
               )}
             </div>
 
@@ -105,7 +103,7 @@ function AppContent() {
                 to="/"
                 end
                 className={({ isActive }) =>
-                  `flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
+                  `flex items-center ${sidebarOpen ? '' : 'justify-center'} px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
                     ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900'
                   }`
@@ -122,7 +120,7 @@ function AppContent() {
                   <NavLink
                     to="/create-stream"
                     className={({ isActive }) =>
-                      `flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
+                      `flex items-center ${sidebarOpen ? '' : 'justify-center'} px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
                         ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900'
                       }`
@@ -136,7 +134,7 @@ function AppContent() {
                   <NavLink
                     to="/algo"
                     className={({ isActive }) =>
-                      `flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
+                      `flex items-center ${sidebarOpen ? '' : 'justify-center'} px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
                         ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900'
                       }`
@@ -151,7 +149,7 @@ function AppContent() {
                   <NavLink
                     to="/history"
                     className={({ isActive }) =>
-                      `flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
+                      `flex items-center ${sidebarOpen ? '' : 'justify-center'} px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
                         ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900'
                       }`
@@ -165,7 +163,7 @@ function AppContent() {
                   <NavLink
                     to="/evaluation"
                     className={({ isActive }) =>
-                      `flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
+                      `flex items-center ${sidebarOpen ? '' : 'justify-center'} px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${isActive
                         ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-900'
                       }`

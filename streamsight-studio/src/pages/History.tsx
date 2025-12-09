@@ -17,6 +17,7 @@ interface StreamJob {
     name: string
     description: string
     category: string
+    params?: any
   }>
 }
 
@@ -24,10 +25,7 @@ const History: React.FC = () => {
   const [streamJobs, setStreamJobs] = useState<StreamJob[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchStreamJobs()
-  }, [])
+  const [expandedJobs, setExpandedJobs] = useState<Record<number, boolean>>({})
 
   const fetchStreamJobs = async () => {
     try {
@@ -44,6 +42,14 @@ const History: React.FC = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  useEffect(() => {
+    fetchStreamJobs()
+  }, [])
+
+  const toggleExpanded = (jobId: number) => {
+    setExpandedJobs(prev => ({ ...prev, [jobId]: !prev[jobId] }))
   }
 
   const getStatusColor = (status: string) => {
@@ -150,7 +156,15 @@ const History: React.FC = () => {
 
               {job.algorithms.length > 0 && (
                 <div className="border-t border-gray-200 dark:border-slate-600 pt-4">
-                  <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-2">Algorithms:</h3>
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium text-gray-700 dark:text-gray-300">Algorithms:</h3>
+                    <button
+                      onClick={() => toggleExpanded(job.id)}
+                      className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded hover:bg-gray-300 dark:hover:bg-gray-600"
+                    >
+                      {expandedJobs[job.id] ? 'Hide Details' : 'Show Details'}
+                    </button>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {job.algorithms.map((algo, index) => (
                       <span key={index} className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm rounded-md">
@@ -158,6 +172,18 @@ const History: React.FC = () => {
                       </span>
                     ))}
                   </div>
+                  {expandedJobs[job.id] && (
+                    <div className="mt-4 space-y-2">
+                      {job.algorithms.map((algo, index) => (
+                        <div key={index} className="bg-gray-50 dark:bg-slate-700 p-3 rounded-md">
+                          <h4 className="font-semibold text-gray-900 dark:text-white">{algo.name}</h4>
+                          <p className="text-gray-700 dark:text-gray-300 text-sm">{algo.description}</p>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm">Category: {algo.category}</p>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm">Parameters: {algo.params ? JSON.stringify(algo.params) : 'None'}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

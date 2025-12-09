@@ -21,11 +21,16 @@ interface Algorithm {
   category: string
 }
 
+interface SelectedAlgorithm {
+  name: string
+  params: Record<string, any>
+}
+
 const Algo: React.FC = () => {
   const [streamJobs, setStreamJobs] = useState<StreamJob[]>([])
   const [algorithms, setAlgorithms] = useState<Algorithm[]>([])
   const [selectedStreamJob, setSelectedStreamJob] = useState<number | null>(null)
-  const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>([])
+  const [selectedAlgorithms, setSelectedAlgorithms] = useState<SelectedAlgorithm[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [fetchingStreams, setFetchingStreams] = useState(true)
@@ -68,19 +73,32 @@ const Algo: React.FC = () => {
     if (selectedStreamJob) {
       const stream = streamJobs.find(job => job.id === selectedStreamJob)
       if (stream) {
-        setSelectedAlgorithms(stream.algorithms.map(algo => algo.name))
+        // For existing algorithms, params are not available, so set to {}
+        setSelectedAlgorithms(stream.algorithms.map(algo => ({ name: algo.name, params: {} })))
       }
     } else {
       setSelectedAlgorithms([])
     }
   }, [selectedStreamJob, streamJobs])
 
-  function handleAlgorithmToggle(algorithmId: string) {
-    setSelectedAlgorithms(prev =>
-      prev.includes(algorithmId)
-        ? prev.filter(id => id !== algorithmId)
-        : [...prev, algorithmId]
-    )
+  async function handleAlgorithmToggle(algorithmId: string) {
+    const isSelected = selectedAlgorithms.some(algo => algo.name === algorithmId)
+    if (isSelected) {
+      // Remove
+      setSelectedAlgorithms(prev => prev.filter(algo => algo.name !== algorithmId))
+    } else {
+      // Add, fetch params
+      try {
+        const response = await apiFetch(`/api/v1/algorithm/get_params/${algorithmId}`)
+        const params = await response.json()
+        setSelectedAlgorithms(prev => [...prev, { name: algorithmId, params }])
+      } catch (err) {
+        console.error('Failed to fetch params:', err)
+        setError('Failed to load algorithm parameters')
+        // Still add with empty params
+        setSelectedAlgorithms(prev => [...prev, { name: algorithmId, params: {} }])
+      }
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -98,7 +116,7 @@ const Algo: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          algorithm_ids: selectedAlgorithms
+          algorithms: selectedAlgorithms
         })
       })
 
@@ -197,7 +215,7 @@ const Algo: React.FC = () => {
                 <label key={algo.name} className="flex items-center space-x-3 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
                   <input
                     type="checkbox"
-                    checked={selectedAlgorithms.includes(algo.name)}
+                    checked={selectedAlgorithms.some(algo => algo.name === algo.name)}
                     onChange={() => handleAlgorithmToggle(algo.name)}
                     className="rounded"
                   />
@@ -213,7 +231,39 @@ const Algo: React.FC = () => {
         </div>
       </div>
 
-      {/* Selected Stream Info */}
+      {/* Algorithm Parameters */}
+      {selectedAlgorithms.length > 0 && (
+        <div className="mt-8 p-6 bg-green-50 dark:bg-green-900/20 rounded-md shadow">
+          <h2 className="text-xl font-semibold mb-4">Configure Algorithm Parameters</h2>
+          <div className="space-y-4">
+            {selectedAlgorithms.map((selectedAlgo, index) => (
+              <div key={selectedAlgo.name} className="p-4 bg-white dark:bg-slate-800 rounded border">
+                <h3 className="font-medium mb-2">{selectedAlgo.name}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.entries(selectedAlgo.params).map(([key, value]) => (
+                    <div key={key}>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        {key}
+                      </label>
+                      <input
+                        type={typeof value === 'number' ? 'number' : 'text'}
+                        value={value}
+                        onChange={(e) => {
+                          const newValue = typeof value === 'number' ? parseFloat(e.target.value) : e.target.value
+                          setSelectedAlgorithms(prev => prev.map((algo, i) =>
+                            i === index ? { ...algo, params: { ...algo.params, [key]: newValue } } : algo
+                          ))
+                        }}
+                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {selectedStream && (
         <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-md shadow">
           <h2 className="text-xl font-semibold mb-4">Selected Stream Details</h2>
@@ -237,14 +287,11 @@ const Algo: React.FC = () => {
               <p className="text-sm font-medium mt-3">Selected Algorithms ({selectedAlgorithms.length}):</p>
               <div className="flex flex-wrap gap-1 mt-1">
                 {selectedAlgorithms.length > 0 ? (
-                  selectedAlgorithms.map(algoId => {
-                    const algo = algorithms.find(a => a.name === algoId)
-                    return algo ? (
-                      <span key={algo.name} className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded">
-                        {algo.name}
-                      </span>
-                    ) : null
-                  })
+                  selectedAlgorithms.map(algo => (
+                    <span key={algo.name} className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded">
+                      {algo.name}
+                    </span>
+                  ))
                 ) : (
                   <span className="text-xs text-slate-500">No algorithms selected</span>
                 )}
