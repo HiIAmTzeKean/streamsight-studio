@@ -4,10 +4,8 @@ RUN pip install --upgrade pip && pip install uv
 
 WORKDIR /src
 
-# Copy project files into /src
 COPY . /src
 
-# Install dependencies
 RUN uv sync
 
 ENV PYTHONPATH=/src

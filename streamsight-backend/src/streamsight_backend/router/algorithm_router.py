@@ -24,9 +24,16 @@ def create_algorithm_router() -> APIRouter:
             for key in keys
         ]
 
-    @router.get("/get_algorithm")
-    def get_algorithm() -> list[str]:
-        """Get algorithm keys from streamsight registry (legacy)."""
-        return ALGORITHM_REGISTRY.get_registered_keys()
-
+    @router.get("/get_params/{algorithm_name}")
+    def get_algorithm_params(algorithm_name: str) -> dict:
+        """Get default parameters for a specific algorithm."""
+        try:
+            algo_class = ALGORITHM_REGISTRY.get(algorithm_name)
+            if not algo_class:
+                raise HTTPException(status_code=404, detail="Algorithm not found")
+            return algo_class.get_default_params()
+        except Exception as e:
+            logger.error(f"Error getting params for {algorithm_name}: {e}")
+            raise HTTPException(status_code=500, detail="Failed to get algorithm parameters")
+    
     return router

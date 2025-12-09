@@ -30,8 +30,13 @@ class CreateStreamResponse(BaseModel):
     status: str
 
 
+class AlgorithmWithParams(BaseModel):
+    name: str
+    params: dict = {}
+
+
 class AddAlgorithmsRequest(BaseModel):
-    algorithm_ids: List[str]
+    algorithms: List[AlgorithmWithParams]
 
 
 class AddAlgorithmsResponse(BaseModel):
@@ -165,7 +170,8 @@ def create_stream_router() -> APIRouter:
                     algorithms.append({
                         "name": sa.algorithm_name,
                         "description": f"Recommendation algorithm: {sa.algorithm_name}",
-                        "category": "Recommendation"
+                        "category": "Recommendation",
+                        "params": sa.parameters
                     })
 
             result.append({
@@ -209,15 +215,16 @@ def create_stream_router() -> APIRouter:
 
         # Validate algorithms exist in streamsight registry
         registered_algorithms = ALGORITHM_REGISTRY.get_registered_keys()
-        for algorithm_id in request.algorithm_ids:
-            if algorithm_id not in registered_algorithms:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Algorithm {algorithm_id} not found in streamsight registry")
+        for algo in request.algorithms:
+            if algo.name not in registered_algorithms:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Algorithm {algo.name} not found in streamsight registry")
 
         # Create StreamAlgorithm entries
-        for algorithm_id in request.algorithm_ids:
+        for algo in request.algorithms:
             stream_algorithm = StreamAlgorithm(
                 stream_job_id=stream_job_id,
-                algorithm_name=algorithm_id
+                algorithm_name=algo.name,
+                parameters=algo.params
             )
             db.add(stream_algorithm)
 
@@ -225,9 +232,9 @@ def create_stream_router() -> APIRouter:
         stream_job.status = "ready"
         db.commit()
 
-        logger.info(f"Added {len(request.algorithm_ids)} algorithms to stream job {stream_job_id}")
+        logger.info(f"Added {len(request.algorithms)} algorithms to stream job {stream_job_id}")
         return AddAlgorithmsResponse(
-            message=f"Successfully added {len(request.algorithm_ids)} algorithms",
+            message=f"Successfully added {len(request.algorithms)} algorithms",
             stream_job_id=stream_job_id,
             status="ready"
         )
