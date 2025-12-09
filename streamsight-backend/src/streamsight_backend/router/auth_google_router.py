@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from streamsight_backend.config.setting import get_settings
 from streamsight_backend.db.connection import get_db
-from streamsight_backend.db.schema import User
+from streamsight_backend.db.schema import StreamUser
 from streamsight_backend.services.auth import create_access_token, hash_password
 
 
@@ -44,10 +44,10 @@ def create_auth_google_router() -> APIRouter:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email not provided by Google")
 
             # Check if user exists
-            user = db.query(User).filter(User.email == email).first()
+            user = db.query(StreamUser).filter(StreamUser.email == email).first()
             if not user:
                 # Create new user
-                user = User(
+                user = StreamUser(
                     username=email,
                     email=email,
                     password=hash_password("google_oauth_dummy"),  # Dummy password since nullable=False

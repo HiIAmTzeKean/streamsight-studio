@@ -36,7 +36,7 @@ help:
 	@echo "  make up-prod           # convenience target for prod"
 
 up:
-	$(DC) up -d --build
+	$(DC) up --build
 
 down:
 	$(DC) down
