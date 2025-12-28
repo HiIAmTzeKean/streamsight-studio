@@ -1,5 +1,4 @@
 services:
-  # Using PostgreSQL for the database
   postgres:
     image: postgres:17-alpine
     environment:
@@ -21,11 +20,12 @@ services:
   # Using FastAPI for the backend
   backend:
     build:
-      context: ./streamsight-backend
+      context: ../
+      dockerfile: streamsight-studio/streamsight-studio-backend/Dockerfile
     ports:
       - "9000:9000"
     volumes:
-      - ./streamsight-backend:/src
+      - ./streamsight-studio-backend:/src
     environment:
       PYTHONUNBUFFERED: 1
       DATABASE_URL: postgresql+psycopg://postgres:password@postgres:5432/streamsight_db
@@ -39,7 +39,7 @@ services:
       watch:
         # Sync source code changes and restart the service
         - action: sync+restart
-          path: ./streamsight-backend
+          path: ./streamsight-studio-backend
           target: /src
           ignore:
             - __pycache__

@@ -8,10 +8,10 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
-from streamsight_backend.config.setting import Settings, get_settings
-from streamsight_backend.db.connection import create_tables
-from streamsight_backend.db.seed import seed_initial_users
-from streamsight_backend.router import (
+from streamsight_studio_backend.config.setting import Settings, get_settings
+from streamsight_studio_backend.db.connection import create_tables
+from streamsight_studio_backend.db.seed import seed_initial_users
+from streamsight_studio_backend.router import (
     create_algorithm_router,
     create_auth_google_router,
     create_auth_router,

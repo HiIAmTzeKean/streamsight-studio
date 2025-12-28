@@ -6,7 +6,7 @@ from pathlib import Path
 def _get_project_root() -> str:
     """Get project root directory path.
 
-    Layout assumption: this file is at repo_root/streamsight-backend/src/streamsight_backend/config/settings.py
+    Layout assumption: this file is at repo_root/streamsight-studio-backend/src/streamsight_studio_backend/config/settings.py
     We walk up 4 levels to reach repo_root.
     """
     repo_root = Path(__file__).parent.parent.parent.parent.resolve().as_posix()

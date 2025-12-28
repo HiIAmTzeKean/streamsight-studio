@@ -7,10 +7,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from streamsight.registries import ALGORITHM_REGISTRY
-from streamsight_backend.config.setting import get_settings
-from streamsight_backend.db.connection import get_db
-from streamsight_backend.db.schema import StreamJob, StreamUser, StreamAlgorithm
-from streamsight_backend.services.auth import get_current_username
+from streamsight_studio_backend.config.setting import get_settings
+from streamsight_studio_backend.db.connection import get_db
+from streamsight_studio_backend.db.schema import StreamJob, StreamUser, StreamAlgorithm
+from streamsight_studio_backend.services.auth import get_current_username
 
 logger = logger.getLogger(__name__)
 

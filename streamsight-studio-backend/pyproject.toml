@@ -1,5 +1,5 @@
 [project]
-name = "streamsight-backend"
+name = "streamsight-studio-backend"
 version = "0.1.0"
 description = ""
 readme = "README.md"
@@ -26,10 +26,10 @@ requires = ["uv_build>=0.9.9,<0.10.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = "streamsight_backend"
+module-name = "streamsight_studio_backend"
 
 [tool.uv.sources]
-streamsight = { path = "./dist/streamsight-2.0.11-py3-none-any.whl" }
+streamsight = { path = "/streamsight" }
 
 [tool.uv]
 required-environments = [

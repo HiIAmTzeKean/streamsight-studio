@@ -3,7 +3,7 @@ from collections.abc import Generator
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from streamsight_backend.config.setting import get_settings
+from streamsight_studio_backend.config.setting import get_settings
 from .schema import Base
 
 

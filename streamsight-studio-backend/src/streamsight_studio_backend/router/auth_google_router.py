@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
-from streamsight_backend.config.setting import get_settings
-from streamsight_backend.db.connection import get_db
-from streamsight_backend.db.schema import StreamUser
-from streamsight_backend.services.auth import create_access_token, hash_password
+from streamsight_studio_backend.config.setting import get_settings
+from streamsight_studio_backend.db.connection import get_db
+from streamsight_studio_backend.db.schema import StreamUser
+from streamsight_studio_backend.services.auth import create_access_token, hash_password
 
 
 # Configure OAuth
