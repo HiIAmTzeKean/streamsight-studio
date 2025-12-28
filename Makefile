@@ -1,17 +1,9 @@
 # Makefile for streamsight
 # Provides convenient targets for running docker compose without relying on a .env file
 
-# Environment selection (dev or prod). Default is dev.
-ENV ?= dev
-
-# Set project name and compose file based on ENV. Users can still override PROJECT_NAME or COMPOSE_FILE on the CLI.
-ifeq ($(ENV),prod)
+# Set project name and compose file. Users can still override PROJECT_NAME or COMPOSE_FILE on the CLI.
 PROJECT_NAME ?= streamsight-prod
 COMPOSE_FILE ?= docker-compose.yml
-else
-PROJECT_NAME ?= streamsight-dev
-COMPOSE_FILE ?= docker-compose.dev.yml
-endif
 
 DC = COMPOSE_PROJECT_NAME=$(PROJECT_NAME) docker compose -f $(COMPOSE_FILE)
 
