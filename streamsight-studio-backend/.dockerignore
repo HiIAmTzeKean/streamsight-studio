@@ -4,8 +4,6 @@
 **/test
 **/scripts
 **/uv.lock
-streamsight
-../../streamsight/
 __pycache__
 *.pyc
 .pytest_cache

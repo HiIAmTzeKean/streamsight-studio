@@ -21,8 +21,10 @@ services:
 
   backend:
     build:
-      context: ../
-      dockerfile: streamsight-studio/streamsight-studio-backend/Dockerfile
+      context: ./streamsight-studio-backend
+      additional_contexts:
+        streamsight: ../streamsight
+      dockerfile: Dockerfile
     ports:
       - "9000:9000"
     volumes:
