@@ -21,11 +21,14 @@ services:
 
   backend:
     build:
-      context: ./streamsight-backend
+      context: ./streamsight-studio-backend
+      additional_contexts:
+        streamsight: ../streamsight
+      dockerfile: Dockerfile
     ports:
       - "9000:9000"
     volumes:
-      - ./streamsight-backend/src:/src/src
+      - ./streamsight-studio-backend/src:/src/src
     env_file: .env
     environment:
       PYTHONUNBUFFERED: 1
@@ -39,7 +42,7 @@ services:
     develop:
       watch:
         - action: sync+restart
-          path: ./streamsight-backend/src
+          path: ./streamsight-studio-backend/src
           target: /src/src
           ignore:
             - __pycache__
@@ -52,15 +55,12 @@ services:
     build:
       context: ./streamsight-studio
       dockerfile: Dockerfile.dev
-      args:
-        VITE_BACKEND_BASE_URL: "http://localhost:9000"
     ports:
       - "8000:8000"
     volumes:
       - ./streamsight-studio:/app
       - /app/node_modules
-    environment:
-      VITE_BACKEND_BASE_URL: "http://localhost:9000"
+    env_file: ".env"
     depends_on:
       - backend
     networks:

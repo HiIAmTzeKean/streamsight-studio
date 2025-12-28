@@ -1,7 +1,7 @@
 import uvicorn
 
-from streamsight_backend.api.app import create_app
-from streamsight_backend.config.setting import get_settings
+from streamsight_studio_backend.api.app import create_app
+from streamsight_studio_backend.config.setting import get_settings
 
 
 app = create_app()

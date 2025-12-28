@@ -2,8 +2,8 @@ import logging as logger
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from streamsight.registries import ALGORITHM_REGISTRY
-from streamsight_backend.config.setting import get_settings
-from streamsight_backend.db.connection import get_db
+from streamsight_studio_backend.config.setting import get_settings
+from streamsight_studio_backend.db.connection import get_db
 
 logger = logger.getLogger(__name__)
 

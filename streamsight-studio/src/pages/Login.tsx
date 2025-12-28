@@ -2,13 +2,12 @@ import React from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import LoginForm from '../components/LoginForm'
-import { apiFetch } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 
 const Login: React.FC = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { setUsername, setUserId } = useAuth()
+  const { login, handleOAuthCallback: authHandleOAuth } = useAuth()
   const [oauthHandled, setOauthHandled] = React.useState(false)
 
   React.useEffect(() => {
@@ -21,13 +20,8 @@ const Login: React.FC = () => {
   }, [searchParams, oauthHandled])
 
   async function handleOAuthCallback(token: string) {
-    // Store token
-    localStorage.setItem('streamsight_access_token', token)
     try {
-      const meRes = await apiFetch('/api/v1/auth/me')
-      const meData = await meRes.json()
-      setUsername(meData.username ?? 'User')
-      setUserId(Number(meData.user_id))
+      await authHandleOAuth(token)
       toast.success('Login successful')
       navigate('/')
     } catch (err) {
@@ -37,42 +31,13 @@ const Login: React.FC = () => {
   }
 
   async function submitLogin(username: string, password: string) {
-    const body = new URLSearchParams()
-    body.append('username', username)
-    body.append('password', password)
-
-    const res = await apiFetch(
-      `/api/v1/auth/token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body.toString(),
-    })
-
-    if (!res.ok) {
-      const text = await res.text()
-      throw new Error(text || `Login failed: ${res.status}`)
-    }
-
-    const data = await res.json()
-    const token = data?.access_token
-    if (!token) throw new Error('No token returned from server')
-
-    // store token and redirect
-    localStorage.setItem('streamsight_access_token', token)
     try {
-      const meRes = await apiFetch('/api/v1/auth/me')
-      const meData = await meRes.json()
-      setUsername(meData.username ?? username)
-      // backend always returns user_id; coerce to number and set
-      setUserId(Number(meData.user_id))
+      await login(username, password)
+      toast.success('Login is successful')
+      navigate('/')
     } catch (err) {
-      // if /me fails, still set the username to the submitted value as a fallback
-      setUsername(username)
-      setUserId(null)
+      toast.error((err as Error).message || 'Login failed')
     }
-    // show success toast and redirect to home
-    toast.success('Login is successful')
-    navigate('/')
   }
 
   return (

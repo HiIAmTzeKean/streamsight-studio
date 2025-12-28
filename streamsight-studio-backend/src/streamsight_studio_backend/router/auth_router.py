@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from streamsight_backend.config.setting import get_settings
-from streamsight_backend.db.connection import get_db
-from streamsight_backend.db.schema import StreamUser
-from streamsight_backend.services.auth import (
+from streamsight_studio_backend.config.setting import get_settings
+from streamsight_studio_backend.db.connection import get_db
+from streamsight_studio_backend.db.schema import StreamUser
+from streamsight_studio_backend.services.auth import (
     create_access_token,
     decode_token,
     get_current_username,
@@ -36,7 +36,7 @@ def create_auth_router() -> APIRouter:
         return {"access_token": access_token, "token_type": "bearer"}
 
     @router.get("/me")
-    async def read_users_me(token: str = Depends(oauth2_scheme)):
+    async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
         try:
             payload = decode_token(token)
             return {"user_id": payload.get("user_id"), "username": payload.get("username")}

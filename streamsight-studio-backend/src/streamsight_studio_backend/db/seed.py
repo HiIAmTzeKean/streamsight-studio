@@ -1,8 +1,8 @@
 from sqlalchemy import select
 
-from streamsight_backend.db.connection import get_database_manager
-from streamsight_backend.db.schema import StreamUser
-from streamsight_backend.services.auth import hash_password
+from streamsight_studio_backend.db.connection import get_database_manager
+from streamsight_studio_backend.db.schema import StreamUser
+from streamsight_studio_backend.services.auth import hash_password
 
 
 def seed_initial_users() -> None:
