@@ -1,6 +1,8 @@
 services:
   postgres:
     image: postgres:17-alpine
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -17,15 +19,17 @@ services:
       retries: 5
       start_period: 10s
 
-  # Using FastAPI for the backend
   backend:
     build:
-      context: ../
-      dockerfile: streamsight-studio/streamsight-studio-backend/Dockerfile
+      context: ./streamsight-studio-backend
+      additional_contexts:
+        streamsight: ../streamsight
+      dockerfile: Dockerfile
     ports:
       - "9000:9000"
     volumes:
-      - ./streamsight-studio-backend:/src
+      - ./streamsight-studio-backend/src:/src/src
+    env_file: .env
     environment:
       PYTHONUNBUFFERED: 1
       DATABASE_URL: postgresql+psycopg://postgres:password@postgres:5432/streamsight_db
@@ -37,47 +41,37 @@ services:
       - streamsight-network
     develop:
       watch:
-        # Sync source code changes and restart the service
         - action: sync+restart
-          path: ./streamsight-studio-backend
-          target: /src
+          path: ./streamsight-studio-backend/src
+          target: /src/src
           ignore:
             - __pycache__
             - .pytest_cache
             - .venv
             - .egg-info
             - dist
-            - uv.lock
 
-  # Using React for the frontend
   frontend:
     build:
-      context: ./streamsight-studio
-      args:
-        # Leave VITE_BACKEND_BASE_URL empty so the frontend uses relative
-        # paths (e.g. `/api/...`) and nginx can proxy them to the `backend`
-        # service inside the Docker network. This avoids exposing a hostname
-        # that the browser cannot resolve.
-        VITE_BACKEND_BASE_URL: ""
+      context: ./streamsight-studio-frontend
+      dockerfile: Dockerfile.dev
     ports:
-      - "8000:80"
+      - "8000:8000"
+    volumes:
+      - ./streamsight-studio-frontend:/app
+      - /app/node_modules
+    env_file: .env
     depends_on:
       - backend
-    environment:
-      # Runtime env for non-built dev (e.g., when running the dev server locally)
-      VITE_BACKEND_BASE_URL: ""
-    restart: unless-stopped
     networks:
       - streamsight-network
+    restart: unless-stopped
     develop:
       watch:
-        # Sync source code changes with restart for development
-        - action: sync+restart
-          path: ./streamsight-studio
-          target: /app
+        - action: sync
+          path: ./streamsight-studio-frontend/src
+          target: /app/src
           ignore:
-            - node_modules
-            - dist
             - .git
 
 volumes:
