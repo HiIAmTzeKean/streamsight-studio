@@ -29,7 +29,7 @@ build-backend = "uv_build"
 module-name = "streamsight_studio_backend"
 
 [tool.uv.sources]
-streamsight = { path = "/streamsight" }
+streamsight = { path = "streamsight" }
 
 [tool.uv]
 required-environments = [

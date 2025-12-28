@@ -6,7 +6,7 @@ RUN pip install --upgrade pip && pip install uv
 
 WORKDIR /src
 
-COPY streamsight /streamsight
+COPY streamsight /src
 COPY streamsight-studio/streamsight-studio-backend /src
 
 RUN uv sync
