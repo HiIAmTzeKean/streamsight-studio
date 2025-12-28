@@ -8,6 +8,8 @@ type AuthContextType = {
   setUserId: (id: number | null) => void
   loading: boolean
   logout: () => void
+  login: (username: string, password: string) => Promise<void>
+  handleOAuthCallback: (token: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -58,8 +60,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUserId(null)
   }
 
+  const login = async (username: string, password: string) => {
+    const body = new URLSearchParams()
+    body.append('username', username)
+    body.append('password', password)
+
+    const res = await apiFetch('/api/v1/auth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+    })
+
+    if (!res.ok) {
+      const text = await res.text()
+      throw new Error(text || `Login failed: ${res.status}`)
+    }
+
+    const data = await res.json()
+    const token = data?.access_token
+    if (!token) throw new Error('No token returned from server')
+
+    localStorage.setItem('streamsight_access_token', token)
+
+    const meRes = await apiFetch('/api/v1/auth/me')
+    const meData = await meRes.json()
+    setUsername(meData.username ?? username)
+    setUserId(Number(meData.user_id))
+  }
+
+  const handleOAuthCallback = async (token: string) => {
+    localStorage.setItem('streamsight_access_token', token)
+    const meRes = await apiFetch('/api/v1/auth/me')
+    const meData = await meRes.json()
+    setUsername(meData.username ?? 'User')
+    setUserId(Number(meData.user_id))
+  }
+
   return (
-    <AuthContext.Provider value={{ username, setUsername, userId, setUserId, loading, logout }}>
+    <AuthContext.Provider value={{ username, setUsername, userId, setUserId, loading, logout, login, handleOAuthCallback }}>
       {children}
     </AuthContext.Provider>
   )
