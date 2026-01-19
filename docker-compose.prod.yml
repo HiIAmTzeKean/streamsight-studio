@@ -54,7 +54,7 @@ services:
   frontend:
     build:
       context: ./streamsight-studio-frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     ports:
       - "80:80"
     volumes:

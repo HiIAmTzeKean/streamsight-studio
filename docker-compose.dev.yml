@@ -56,7 +56,7 @@ services:
       context: ./streamsight-studio-frontend
       dockerfile: Dockerfile.dev
     ports:
-      - "8000:8000"
+      - "80:80"
     volumes:
       - ./streamsight-studio-frontend:/app
       - /app/node_modules
