@@ -9,6 +9,7 @@ export const useStreamFormData = () => {
   const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null)
   const [fetchingDatasets, setFetchingDatasets] = useState(true)
   const [fetchingMetrics, setFetchingMetrics] = useState(true)
+  const [fetchingTimestampRange, setFetchingTimestampRange] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export const useStreamFormData = () => {
   }, [])
 
   const fetchTimestampRange = useCallback(async (dataset: string) => {
+    setFetchingTimestampRange(true)
     try {
       const response = await apiFetch(`/api/v1/dataset/${dataset}/get_timestamp_range`)
       const data = await response.json()
@@ -55,6 +57,8 @@ export const useStreamFormData = () => {
     } catch (err) {
       console.error('Failed to fetch timestamp range:', err)
       setError('Failed to load timestamp range')
+    } finally {
+      setFetchingTimestampRange(false)
     }
   }, [])
 
@@ -73,6 +77,7 @@ export const useStreamFormData = () => {
     setSelectedTimestamp,
     fetchingDatasets,
     fetchingMetrics,
+    fetchingTimestampRange,
     error,
     setError,
     fetchTimestampRange,

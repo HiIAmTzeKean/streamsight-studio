@@ -3,10 +3,6 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 ENV PATH=/app/node_modules/.bin:$PATH
 
-# Allow passing Vite env at build time so `import.meta.env.VITE_BACKEND_BASE_URL` is populated
-ARG VITE_BACKEND_BASE_URL
-ENV VITE_BACKEND_BASE_URL=${VITE_BACKEND_BASE_URL}
-
 COPY package*.json ./
 RUN npm ci --silent
 

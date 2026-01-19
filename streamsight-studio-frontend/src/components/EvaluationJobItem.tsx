@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { StreamJob } from '../hooks/useStreamJobHistory'
+import { StreamJob } from '../types/evaluationTypes'
 
-interface StreamJobItemProps {
+interface EvaluationJobItemProps {
   job: StreamJob
+  running: boolean
+  onRun: (job: StreamJob) => void
   onDelete: (jobId: number) => void
 }
 
-const StreamJobItem: React.FC<StreamJobItemProps> = ({ job, onDelete }) => {
+const EvaluationJobItem: React.FC<EvaluationJobItemProps> = ({ job, running, onRun, onDelete }) => {
   const navigate = useNavigate()
   const [expanded, setExpanded] = useState(false)
 
@@ -22,7 +24,7 @@ const StreamJobItem: React.FC<StreamJobItemProps> = ({ job, onDelete }) => {
     }
   }
 
-  const formatDate = (dateString: string | null) => {
+  const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'Not set'
     return new Date(dateString).toLocaleString()
   }
@@ -59,6 +61,23 @@ const StreamJobItem: React.FC<StreamJobItemProps> = ({ job, onDelete }) => {
               title="View evaluation results"
             >
               View Results
+            </button>
+          )}
+          {!job.completed_at ? (
+            <button
+              onClick={() => onRun(job)}
+              disabled={running}
+              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors disabled:opacity-50"
+            >
+              {running ? 'Starting...' : 'Run Job'}
+            </button>
+          ) : (
+            <button
+              onClick={() => onRun(job)}
+              disabled={running}
+              className="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm rounded-md transition-colors disabled:opacity-50"
+            >
+              {running ? 'Rerunning...' : 'Rerun Job'}
             </button>
           )}
           <button
@@ -137,7 +156,6 @@ const StreamJobItem: React.FC<StreamJobItemProps> = ({ job, onDelete }) => {
                 <div key={index} className="bg-gray-50 dark:bg-slate-700 p-3 rounded-md">
                   <h4 className="font-semibold text-gray-900 dark:text-white">{algo.name}</h4>
                   <p className="text-gray-700 dark:text-gray-300 text-sm">{algo.description}</p>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Category: {algo.category}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">Parameters: {formatParameters(algo.params)}</p>
                 </div>
               ))}
@@ -149,4 +167,4 @@ const StreamJobItem: React.FC<StreamJobItemProps> = ({ job, onDelete }) => {
   )
 }
 
-export default StreamJobItem
+export default EvaluationJobItem

@@ -2,11 +2,7 @@
 
 A web-based studio for evaluating and analyzing streaming recommendation algorithms.
 
-## Prerequisites
-
-- Docker
-- Docker Compose
-- Git
+![landing_page](/static/landing_page.png)
 
 ## Installation
 
@@ -41,19 +37,3 @@ This will:
 - Start the frontend development server on port 8000
 
 You can then access the application at `http://localhost:8000`.
-
-## Development
-
-For development, you can use the provided Makefile targets:
-
-- `make up` - Start services in detached mode
-- `make down` - Stop and remove services
-- `make logs` - Follow logs for all services
-- `make build` - Build Docker images
-
-## Project Structure
-
-- `streamsight-studio-backend/` - Python FastAPI backend
-- `streamsight-studio-frontend/` - React/TypeScript frontend
-- `docker-compose.yml` - Docker Compose configuration
-- `Makefile` - Convenience commands for development

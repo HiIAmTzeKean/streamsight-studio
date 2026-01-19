@@ -14,13 +14,13 @@ def create_algorithm_router() -> APIRouter:
     @router.get("/list")
     async def list_algorithms() -> list[dict]:
         """Get list of available algorithms from streamsight registry."""
-        keys = await run_in_threadpool(ALGORITHM_REGISTRY.get_registered_keys)
+        items = await run_in_threadpool(ALGORITHM_REGISTRY.registered_items)
         return [
             {
                 "name": key,
-                "description": f"Recommendation algorithm: {key}"
+                "description": value.__doc__ or "No description provided."
             }
-            for key in keys
+            for key, value in items
         ]
 
     @router.get("/get_params/{algorithm_name}")

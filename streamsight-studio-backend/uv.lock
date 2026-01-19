@@ -1382,7 +1382,7 @@ wheels = [
 
 [[package]]
 name = "streamsight"
-version = "3.1.6"
+version = "3.1.7"
 source = { directory = "streamsight" }
 dependencies = [
     { name = "colorama" },

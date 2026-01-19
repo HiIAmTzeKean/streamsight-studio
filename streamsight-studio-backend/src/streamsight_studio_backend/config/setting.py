@@ -46,7 +46,7 @@ class Settings:
         self.RELOAD_APP_ON_CHANGE = os.getenv("RELOAD_APP_ON_CHANGE", "true").lower() == "true"
 
         # Middleware Configuration
-        cors_origins = "https://localhost:8000,https://127.0.0.1:8000,http://localhost:8000"
+        cors_origins = "https://localhost:8000,https://127.0.0.1:8000,http://localhost:8000,https://localhost,https://127.0.0.1,http://localhost"
         self.CORS_ORIGINS = cors_origins.split(",") if cors_origins != "*" else ["*"]
         self.SESSION_SECRET_KEY = os.getenv("SESSION_SECRET_KEY", "dev-session-secret-change-me")
 
