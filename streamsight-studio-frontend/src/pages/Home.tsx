@@ -88,25 +88,6 @@ export default function Home() {
           </a>
         </div>
       </section>
-
-      {/* Use Cases */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">Perfect For</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-lg">
-            <h4 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">Academic Research</h4>
-            <p className="text-sm text-slate-600 dark:text-slate-400">Evaluate novel algorithms with proper temporal validation</p>
-          </div>
-          <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-lg">
-            <h4 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">Industry Applications</h4>
-            <p className="text-sm text-slate-600 dark:text-slate-400">Deploy production-ready recommendation systems</p>
-          </div>
-          <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-lg">
-            <h4 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">Benchmarking</h4>
-            <p className="text-sm text-slate-600 dark:text-slate-400">Compare algorithms across standardized temporal settings</p>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

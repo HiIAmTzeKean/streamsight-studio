@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ mode }) => {
   // Load environment variables based on mode
-  const env = loadEnv(mode, process.cwd(), 'VITE_')
+  // const env = loadEnv(mode, process.cwd(), 'VITE_')
   
   return {
     plugins: [react(), tailwindcss()],
@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist'
     },
     server: {
-      port: 8000,
+      port: 80,
       watch: {
         usePolling: true,
       }
